@@ -1,0 +1,20 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-fsanitize=address",
+      "-I./includes/",
+      "-I./libft/",
+      "-I./includes/",
+      "-I./libft/",
+      "-g",
+      "-c",
+      "-o",
+      "./objects//src/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/samusanc/42/ft_nm",
+    "file": "/home/samusanc/42/ft_nm/src/main.c",
+    "output": "/home/samusanc/42/ft_nm/objects/src/main.o"
+  }
+]

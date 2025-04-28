@@ -6,16 +6,17 @@
 #    By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 01:22:18 by samusanc          #+#    #+#              #
-#    Updated: 2025/04/28 08:03:55 by samusanc         ###   ########.fr        #
+#    Updated: 2025/04/28 09:33:00 by samusanc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME		= nm
+NAME		= ft_nm
 COMPOSE := $(shell command -v docker-compose || echo "docker compose")
 
 #=============================== INCLUDES ===============================#
 
 INC			= -I./includes/ 
+INC		   += -I./libft/ 
 
 #============================== LIBRARIES ===============================#
 
@@ -24,7 +25,8 @@ SUBMODLIB	= ./libft/libft.a
 #================================= GCC ==================================#
 
 # GCC WITH LIBS AND INCLUDES
-CFLAGS		= -Wextra -fsanitize=address
+CFLAGS		= -fsanitize=address
+CFLAGS	   += #-Wall -Wextra -Werror
 CC			= gcc $(CFLAGS) $(INC)
 
 #================================= SCRS =================================#
