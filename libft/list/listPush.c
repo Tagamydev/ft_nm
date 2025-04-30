@@ -16,6 +16,8 @@ void	list_push_f(t_list *list, t_node *node)
 {
 	t_node	*tmp;
 
+	if (!node || !list)
+		return ;
 	tmp = list->head;
 	if (tmp)
 	{
@@ -37,6 +39,8 @@ void	list_push_b(t_list *list, t_node *node)
 {
 	t_node	*tmp;
 
+	if (!node || !list)
+		return ;
 	tmp = list->tail;
 	if (tmp)
 	{

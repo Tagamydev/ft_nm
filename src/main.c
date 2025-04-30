@@ -82,6 +82,22 @@ char	get_symbol_type_x64(Elf64_Sym *sym, Elf64_Shdr *shdrs, Elf64_Ehdr *ehdr)
 	return c;
 }
 
+typedef	struct s_header{
+	size_t	addr;
+	char	type_char;
+	char	*name;
+}	t_header;
+
+void	*free_header(void *ptr)
+{
+	t_header	*cast;
+
+	cast = (t_header *)ptr;
+	free(cast->name);
+	free(ptr);
+	return (NULL);
+}
+
 int	ft_nm(char *file)
 {
 	int fd = open(file, O_RDONLY);
@@ -116,12 +132,25 @@ int	ft_nm(char *file)
 		Elf64_Sym *symbols = (Elf64_Sym *)((char *)mapped + symtab_hdr->sh_offset);
 		int num_symbols = symtab_hdr->sh_size / sizeof(Elf64_Sym);
 		char *strtab = (char *)mapped + strtab_hdr->sh_offset;
+		t_list	output = list(NULL);
 		for (int i = 0; i < num_symbols; i++)
 		{
+			t_node		*new_node;
+			t_header	*header;
+
 			Elf64_Sym sym = symbols[i];
 			if (sym.st_name == 0) continue;
+			header = malloc(sizeof(t_header));
+			if (!header)
+				return (error("fatal", "malloc allocation failed", 0));
+			ft_bzero(header, sizeof(t_header));
 			const char *name = strtab + sym.st_name;
 			char type_char = get_symbol_type_x64(&sym, shdr, ehdr);
+			header->addr = sym.st_value;
+			header->type_char = type_char;
+			header->name = ft_strdup(name);
+			list_push_b(&output, node(header, free_header));
+			/*
 			if (type_char != 'A' && type_char != 'a')
 			{
 				if (sym.st_value)
@@ -129,7 +158,24 @@ int	ft_nm(char *file)
 				else
 					printf("                 %c %s\n", type_char, name);
 			}
+			*/
 		}
+		t_node	*tmp;
+
+		tmp = output.head;
+		for (int i = 0; i < output.size; i++)
+		{
+			t_header	*tmp2;
+
+
+			tmp2 = (t_header *)tmp->content;
+			if (tmp2->addr)
+				printf("%016lx %c %s\n", tmp2->addr, tmp2->type_char, tmp2->name);
+			else
+				printf("                 %c %s\n", tmp2->type_char, tmp2->name);
+			tmp = tmp->next;
+		}
+		list_clear(&output);
 	}
 	else
 	{

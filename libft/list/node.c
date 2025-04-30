@@ -18,6 +18,8 @@ t_node	*node(void *content, void *(*del)(void *))
 	t_node	*result;
 
 	result = malloc(sizeof(t_node));
+	if (!result)
+		return (NULL);
 	ft_bzero(result, sizeof(t_node));
 	result->content = content;
 	result->del = del;
