@@ -41,6 +41,40 @@ int	error(char *title, char *message, int i)
 	return (1);
 }
 
+char	get_symbol_type_x64(Elf64_Sym *sym, Elf64_Shdr *shdrs, Elf64_Ehdr *ehdr)
+{
+	if (sym->st_shndx == SHN_UNDEF)
+		return ('U');
+	if (sym->st_shndx == SHN_ABS)
+		return ('A');
+	if (sym->st_shndx == SHN_COMMON)
+		return ('C');
+	Elf64_Shdr *sec = &shdrs[sym->st_shndx];
+	char c = '?';
+	if (sec->sh_type == SHT_NOBITS)
+	{
+		if (sec->sh_flags & SHF_WRITE)
+		c = 'B';
+	}
+	else if (sec->sh_flags & SHF_EXECINSTR)
+		c = 'T';
+	else if (sec->sh_flags & SHF_WRITE)
+		c = 'D';
+	else if (sec->sh_flags & SHF_ALLOC)
+		c = 'R';
+	unsigned char bind = ELF64_ST_BIND(sym->st_info);
+	if (bind == STB_LOCAL)
+		c = ft_tolower(c);
+	if (bind == STB_WEAK)
+	{
+		if (sym->st_shndx == SHN_UNDEF)
+			c = 'w';
+		else
+			c = 'W';
+	}
+	return c;
+}
+
 int	ft_nm(char *file)
 {
 	int fd = open(file, O_RDONLY);
@@ -57,7 +91,7 @@ int	ft_nm(char *file)
 	if (is_64)
 	{
 		// x64 file
-		ft_printf("%s\n", "this file is x64");
+		//ft_printf("%s\n", "this file is x64");
 		Elf64_Ehdr *ehdr = (Elf64_Ehdr *)mapped;
 		Elf64_Shdr	*shdr = (Elf64_Shdr *)((char *)mapped + ehdr->e_shoff);
 		char *shtrtab = (char*)mapped + shdr[ehdr->e_shstrndx].sh_offset;
@@ -80,16 +114,14 @@ int	ft_nm(char *file)
 			Elf64_Sym sym = symbols[i];
 			if (sym.st_name == 0) continue;
 			const char *name = strtab + sym.st_name;
-			char type_char = '?';
-			switch (ELF64_ST_TYPE(sym.st_info))
+			char type_char = get_symbol_type_x64(&sym, shdr, ehdr);
+			if (type_char != 'A')
 			{
-				case STT_FUNC: type_char = 'T'; break;
-				case STT_OBJECT: type_char = 'D'; break;
-				case STT_SECTION: type_char = 'S'; break;
-				case STT_NOTYPE: type_char = 'N'; break;
-				default: type_char = '?'; break;
+				if (sym.st_value)
+					printf("%016lx %c %s\n", sym.st_value, type_char, name);
+				else
+					printf("                 %c %s\n", type_char, name);
 			}
-			printf("%016lx %c %s\n", sym.st_value, type_char, name);
 		}
 	}
 	else
