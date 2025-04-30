@@ -20,6 +20,7 @@
 # include <sys/mman.h>
 # include <stdlib.h>
 # include <string.h>
+# include <elf.h>
 # include "libft.h"
 
 
