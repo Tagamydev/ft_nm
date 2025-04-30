@@ -13,40 +13,19 @@
 #include "ft_nm.h"
 #include "libft.h"
 
-char *error_str(char *title, char *error)
-{
-    char *buff;
-    int i = 0;
-    int j = 0;
-    int size = ft_strlen(title) + ft_strlen(error) + 2 + 1;
-
-    buff = malloc(sizeof(char) * size);
-    if (!buff)
-        return (NULL);
-    ft_bzero(buff, size);
-    while (i < ft_strlen(title))
-    {
-        buff[i] = title[i];
-        i++;
-    }
-    buff[i++] = ':';
-    buff[i++] = ' ';
-    while (j < ft_strlen(error))
-    {
-        buff[i] = error[j];
-        j++;
-        i++;
-    }
-    buff[i] = '\0';
-    return (buff);
-}
-
-int	error(char *str)
+int	error(char *title, char *message, int i)
 {
 	write(2, "nm: ", 4);
-	if (str)
-		write(2, str, ft_strlen(str));
-	free(str);
+    if (title)
+    {
+        if (i)
+            write(2, "'", 1);
+        write(2, title, ft_strlen(title));
+        if (i)
+            write(2, "'", 1);
+        write(2, ": ", 2);
+    }
+    write(2, message, ft_strlen(message));
 	write(2, "\n", 1);
 	return (1);
 }
@@ -55,8 +34,7 @@ int	ft_nm(char *file)
 {
 	int fd = open(file, O_RDONLY);
 	if (fd < 0)
-		return (error(error_str("a", "b")));
-
+		return (error(file, "No such file", 1));
 	return (0);
 }
 
