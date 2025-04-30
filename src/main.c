@@ -43,18 +43,25 @@ int	error(char *title, char *message, int i)
 
 char	get_symbol_type_x64(Elf64_Sym *sym, Elf64_Shdr *shdrs, Elf64_Ehdr *ehdr)
 {
+	unsigned char bind = ELF64_ST_BIND(sym->st_info);
+
 	if (sym->st_shndx == SHN_UNDEF)
-		return ('U');
+	{
+		if (bind == STB_WEAK)
+			return ('w');
+		else
+			return ('U');
+	}
 	if (sym->st_shndx == SHN_ABS)
-		return ('A');
+		return (bind == STB_LOCAL) ? 'a' : 'A';
 	if (sym->st_shndx == SHN_COMMON)
-		return ('C');
+		return (bind == STB_LOCAL) ? 'c' : 'C';
 	Elf64_Shdr *sec = &shdrs[sym->st_shndx];
 	char c = '?';
 	if (sec->sh_type == SHT_NOBITS)
 	{
 		if (sec->sh_flags & SHF_WRITE)
-		c = 'B';
+			c = 'B';
 	}
 	else if (sec->sh_flags & SHF_EXECINSTR)
 		c = 'T';
@@ -62,15 +69,15 @@ char	get_symbol_type_x64(Elf64_Sym *sym, Elf64_Shdr *shdrs, Elf64_Ehdr *ehdr)
 		c = 'D';
 	else if (sec->sh_flags & SHF_ALLOC)
 		c = 'R';
-	unsigned char bind = ELF64_ST_BIND(sym->st_info);
 	if (bind == STB_LOCAL)
 		c = ft_tolower(c);
+
 	if (bind == STB_WEAK)
 	{
 		if (sym->st_shndx == SHN_UNDEF)
-			c = 'w';
+			return ('w');
 		else
-			c = 'W';
+			return ('W');
 	}
 	return c;
 }
@@ -115,7 +122,7 @@ int	ft_nm(char *file)
 			if (sym.st_name == 0) continue;
 			const char *name = strtab + sym.st_name;
 			char type_char = get_symbol_type_x64(&sym, shdr, ehdr);
-			if (type_char != 'A')
+			if (type_char != 'A' && type_char != 'a')
 			{
 				if (sym.st_value)
 					printf("%016lx %c %s\n", sym.st_value, type_char, name);
