@@ -88,6 +88,28 @@ typedef	struct s_header{
 	char	*name;
 }	t_header;
 
+typedef struct s_flags{
+	// u > g > a
+	int	a;
+	int g;
+	int u;
+	// p > r
+	int	r;
+	int p;
+	int	total;
+} t_flags;
+
+t_flags	parse_flags(char **argv)
+{
+	t_flags	result;
+	char	**array = argv + 1;
+	for (int i = 0; argv[i]; i++)
+	{
+		parse_flag(&result, argv[i]);
+	}
+	return (result);
+}
+
 void	*free_header(void *ptr)
 {
 	t_header	*cast;
@@ -100,6 +122,8 @@ void	*free_header(void *ptr)
 
 int	ft_nm(char *file)
 {
+	if (file[0] == '-')
+		return (0);
 	int fd = open(file, O_RDONLY);
 	if (fd < 0)
 		return (error(file, "No such file", 1));
