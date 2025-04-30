@@ -35,6 +35,12 @@ int	ft_nm(char *file)
 	int fd = open(file, O_RDONLY);
 	if (fd < 0)
 		return (error(file, "No such file", 1));
+	struct stat st;
+	fstat(fd, &st);
+	void	*mapped = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	close(fd);
+	unsigned char *e_ident = (unsigned char *)mapped;
+	ft_printf("%s", e_ident);
 	return (0);
 }
 
