@@ -289,8 +289,21 @@ void	print_list(t_list *list, int order, int is_64, char flag)
 
 }
 
+int	ft_test1cull()
+{
+	return (1);
+}
+
+int	ft_testb()
+{
+	return (1);
+
+}
+
 int	ft_strcmpl(char	*str1, char *str2)
 {
+	(void)ft_testb();
+	(void)ft_test1cull();
 	char	*cp_str1 = ft_strdup(str1);
 	char	*cp_str2 = ft_strdup(str2);
 
@@ -302,8 +315,15 @@ int	ft_strcmpl(char	*str1, char *str2)
 	{
 		cp_str2[i] = ft_tolower(cp_str2[i]);
 	}
+	char	*cp_12 = cp_str1;
+	char	*cp_22 = cp_str2;
 
-	int result = ft_strcmp(cp_str1, cp_str2);
+	while (*cp_12 == '_')
+		*cp_12++;
+	while (*cp_22 == '_')
+		*cp_22++;
+
+	int result = ft_strcmp(cp_12, cp_22);
 	free(cp_str1);
 	free(cp_str2);
 	return (result);
