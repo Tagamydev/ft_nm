@@ -1,2 +1,0 @@
-nm 'not_existing_file'
-nm 'ft_nm'
