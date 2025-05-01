@@ -13,6 +13,57 @@
 #include "ft_nm.h"
 #include "libft.h"
 
+void	print_help()
+{
+	ft_printf("%s", "Usage: nm [option(s)] [file(s)]\n");
+	ft_printf("%s", " List symbols in [file(s)] (a.out by default).\n");
+	ft_printf("%s", " The options are:\n");
+	ft_printf("%s", "  -a, --debug-syms       Display debugger-only symbols\n");
+	ft_printf("%s", "  -A, --print-file-name  Print name of the input file before every symbol\n");
+	ft_printf("%s", "  -B                     Same as --format=bsd\n");
+	ft_printf("%s", "  -C, --demangle[=STYLE] Decode mangled/processed symbol names\n");
+	ft_printf("%s", "                           STYLE can be \"none\", \"auto\", \"gnu-v3\", \"java\",\n");
+	ft_printf("%s", "                           \"gnat\", \"dlang\", \"rust\"\n");
+	ft_printf("%s", "      --no-demangle      Do not demangle low-level symbol names\n");
+	ft_printf("%s", "      --recurse-limit    Enable a demangling recursion limit.  (default)\n");
+	ft_printf("%s", "      --no-recurse-limit Disable a demangling recursion limit.\n");
+	ft_printf("%s", "  -D, --dynamic          Display dynamic symbols instead of normal symbols\n");
+	ft_printf("%s", "  -e                     (ignored)\n");
+	ft_printf("%s", "  -f, --format=FORMAT    Use the output format FORMAT.  FORMAT can be `bsd',\n");
+	ft_printf("%s", "                           `sysv', `posix' or 'just-symbols'.\n");
+	ft_printf("%s", "                           The default is `bsd'\n");
+	ft_printf("%s", "  -g, --extern-only      Display only external symbols\n");
+	ft_printf("%s", "    --ifunc-chars=CHARS  Characters to use when displaying ifunc symbols\n");
+	ft_printf("%s", "  -j, --just-symbols     Same as --format=just-symbols\n");
+	ft_printf("%s", "  -l, --line-numbers     Use debugging information to find a filename and\n");
+	ft_printf("%s", "                           line number for each symbol\n");
+	ft_printf("%s", "  -n, --numeric-sort     Sort symbols numerically by address\n");
+	ft_printf("%s", "  -o                     Same as -A\n");
+	ft_printf("%s", "  -p, --no-sort          Do not sort the symbols\n");
+	ft_printf("%s", "  -P, --portability      Same as --format=posix\n");
+	ft_printf("%s", "  -r, --reverse-sort     Reverse the sense of the sort\n");
+	ft_printf("%s", "      --plugin NAME      Load the specified plugin\n");
+	ft_printf("%s", "  -S, --print-size       Print size of defined symbols\n");
+	ft_printf("%s", "  -s, --print-armap      Include index for symbols from archive members\n");
+	ft_printf("%s", "      --quiet            Suppress \"no symbols\" diagnostic\n");
+	ft_printf("%s", "      --size-sort        Sort symbols by size\n");
+	ft_printf("%s", "      --special-syms     Include special symbols in the output\n");
+	ft_printf("%s", "      --synthetic        Display synthetic symbols as well\n");
+	ft_printf("%s", "  -t, --radix=RADIX      Use RADIX for printing symbol values\n");
+	ft_printf("%s", "      --target=BFDNAME   Specify the target object format as BFDNAME\n");
+	ft_printf("%s", "  -u, --undefined-only   Display only undefined symbols\n");
+	ft_printf("%s", "  -U, --defined-only     Display only defined symbols\n");
+	ft_printf("%s", "      --unicode={default|show|invalid|hex|escape|highlight}\n");
+	ft_printf("%s", "                         Specify how to treat UTF-8 encoded unicode characters\n");
+	ft_printf("%s", "  -W, --no-weak          Ignore weak symbols\n");
+	ft_printf("%s", "      --with-symbol-versions  Display version strings after symbol names\n");
+	ft_printf("%s", "  -X 32_64               (ignored)\n");
+	ft_printf("%s", "  @FILE                  Read options from FILE\n");
+	ft_printf("%s", "  -h, --help             Display this information\n");
+	ft_printf("%s", "  -V, --version          Display this program's version number\n");
+	ft_printf("%s", "nm: supported targets: elf64-x86-64 elf32-i386 elf32-iamcu elf32-x86-64 pei-i386 pe-x86-64 pei-x86-64 elf64-little elf64-big elf32-little elf32-big pe-bigobj-x86-64 pe-i386 pdb srec symbolsrec verilog tekhex binary ihex plugin");
+}
+
 int	ft_strcmp(const char *str1, const char *str2)
 {
 	int	len1 = strlen(str1);
@@ -97,15 +148,66 @@ typedef struct s_flags{
 	int	r;
 	int p;
 	int	total;
+	int	error;
 } t_flags;
+
+void	parse_flag(t_flags *result, char *str)
+{
+	if (str[0] != '-')
+		return ;
+	str++;
+	result->total += 1;
+	for (int i = 0; str[i]; i++)
+	{
+		switch (str[i])
+		{
+			case 'a':
+				result->a += 1;
+				break;
+			case 'g':
+				result->g += 1;
+				break;
+			case 'u':
+				result->u += 1;
+				break;
+			case 'r':
+				result->r += 1;
+				break;
+			case 'p':
+				result->p += 1;
+				break;
+			case 'h':
+				print_help();
+				exit(0);
+				break;
+			default:
+				char	error_str[3];
+				char	*error_ptr;
+
+				error_str[0] = str[i];
+				error_str[1] = '\'';
+				error_str[2] = '\0';
+				error_ptr = ft_strjoin(ft_strdup("invalid option -- '"), ft_strdup(error_str));
+				error(NULL, error_ptr, 0);
+				free(error_ptr);
+				result->error = 1;
+				return;
+				break;
+		}
+	}
+}
 
 t_flags	parse_flags(char **argv)
 {
 	t_flags	result;
 	char	**array = argv + 1;
+
+	ft_bzero(&result, sizeof(t_flags));
 	for (int i = 0; argv[i]; i++)
 	{
 		parse_flag(&result, argv[i]);
+		if (result.error)
+			return (result);
 	}
 	return (result);
 }
@@ -120,7 +222,58 @@ void	*free_header(void *ptr)
 	return (NULL);
 }
 
-int	ft_nm(char *file)
+char	*convert_addr()
+{
+	char	str_64[17];
+	char	str_86[9];
+
+	ft_bzero(str_64, sizeof(str_64));
+	ft_memset(str_64, '0', sizeof(str_64));
+	ft_bzero(str_86, sizeof(str_86));
+	ft_memset(str_86, '0', sizeof(str_86));
+
+}
+
+void	print_content(t_header *content, int is_64, char flag)
+{
+	if (content->addr)
+	{
+		char	*str = convert_addr(content->addr, int is_64);
+		ft_printf("%s %c %s\n", str, content->type_char, content->name);
+		free(str);
+	}
+	else
+	{
+		if (is_64)
+			ft_printf("                 %c %s\n", content->type_char, content->name);
+		else
+			ft_printf("         %c %s\n", content->type_char, content->name);
+	}
+}
+
+void	print_list(t_list *list, int order, int is_64, char flag)
+{
+		t_node	*tmp;
+
+		if (order)
+			tmp = list->head;
+		else
+			tmp = list->tail;
+		for (int i = 0; i < list->size; i++)
+		{
+			t_header	*tmp2;
+
+			tmp2 = (t_header *)tmp->content;
+			print_content(tmp2, is_64, flag);
+			if (order)
+				tmp = tmp->next;
+			else
+				tmp = tmp->back;
+		}
+
+}
+
+int	ft_nm(char *file, t_flags flags)
 {
 	if (file[0] == '-')
 		return (0);
@@ -174,31 +327,26 @@ int	ft_nm(char *file)
 			header->type_char = type_char;
 			header->name = ft_strdup(name);
 			list_push_b(&output, node(header, free_header));
-			/*
-			if (type_char != 'A' && type_char != 'a')
-			{
-				if (sym.st_value)
-					printf("%016lx %c %s\n", sym.st_value, type_char, name);
-				else
-					printf("                 %c %s\n", type_char, name);
-			}
-			*/
 		}
-		t_node	*tmp;
+	// u > g > a
+	// p > r
+		int	reverse = 0;
 
-		tmp = output.head;
-		for (int i = 0; i < output.size; i++)
+		if (!flags.p)
 		{
-			t_header	*tmp2;
-
-
-			tmp2 = (t_header *)tmp->content;
-			if (tmp2->addr)
-				printf("%016lx %c %s\n", tmp2->addr, tmp2->type_char, tmp2->name);
-			else
-				printf("                 %c %s\n", tmp2->type_char, tmp2->name);
-			tmp = tmp->next;
+			sort_list(&output);
+			if (flags.r)
+				reverse = 1;
 		}
+
+		if (flags.u)
+			print_list(&output, reverse, 1,'u');
+		else if (flags.g)
+			print_list();
+		else if (flags.a)
+			print_list();
+		else
+			print_list();
 		list_clear(&output);
 	}
 	else
@@ -212,16 +360,22 @@ int	ft_nm(char *file)
 int	main(int argc, char **argv)
 {
 	int	error_counter = 0;
+	t_flags	flags = parse_flags(argv);
 
-	if (argc == 1)
+	if (flags.error && flags.error != -1)
 	{
-		error_counter += ft_nm("a.out");
+		print_help();
+		return (1);
 	}
-	else if (argc > 1)
+	if (argc == (flags.total + 1))
+	{
+		error_counter += ft_nm("a.out", flags);
+	}
+	else
 	{
 		for (int i = 1; i < argc; i++)
 		{
-			error_counter += ft_nm(argv[i]);
+			error_counter += ft_nm(argv[i], flags);
 		}
 	}
 	return (error_counter);
