@@ -1,110 +1,112 @@
-r __abi_tag
-U __asan_handle_no_return
-U __asan_init
-B __asan_option_detect_stack_use_after_return
-U __asan_register_globals
-U __asan_report_load1
-U __asan_report_load2
-U __asan_report_load4
-U __asan_report_load8
-U __asan_report_load_n
-U __asan_report_store1
-U __asan_report_store4
-U __asan_report_store8
-U __asan_report_store_n
-U __asan_stack_malloc_0
-U __asan_stack_malloc_1
-U __asan_stack_malloc_3
-U __asan_unregister_globals
-U __asan_version_mismatch_check_v8
-B __bss_start
-w __cxa_finalize@GLIBC_2.2.5
-D __data_start
-t __do_global_dtors_aux
-d __do_global_dtors_aux_fini_array_entry
-D __dso_handle
-d __frame_dummy_init_array_entry
-r __FRAME_END__
-w __gmon_start__
-r __GNU_EH_FRAME_HDR
-U __libc_start_main@GLIBC_2.34
-D __local_asan_preinit
-D __TMC_END__
-d _DYNAMIC
-D _edata
-B _end
-T _fini
-d _GLOBAL_OFFSET_TABLE_
-T _init
-R _IO_stdin_used
-w _ITM_deregisterTMCloneTable
-w _ITM_registerTMCloneTable
-T _start
-t _sub_D_00099_0
-t _sub_I_00099_1
-U close@GLIBC_2.2.5
-b completed.0
-T convert_addr
-W data_start
-t deregister_tm_clones
-T error
-U exit@GLIBC_2.2.5
-t frame_dummy
-U free
-T free_header
-U fstat@GLIBC_2.33
-T ft_bzero
-t ft_convert_and_write
-T ft_format_char
-T ft_format_hex
-t ft_format_int_and_decimal
-T ft_format_numbers
-t ft_format_p
-T ft_format_string
-t ft_format_unsigned
-t ft_format_x
-t ft_if_convert
-t ft_intlen
-T ft_itoa
-T ft_memset
-T ft_nm
-t ft_print_null
-T ft_printf
-t ft_put_str
-T ft_strcmp
-T ft_strcmpl
-T ft_strdup
-T ft_strjoin
-T ft_strlen
-T ft_strncmp
-t ft_sum_general_count
-t ft_sum_general_count
-T ft_tolower
-T get_symbol_type_x64
-T list
-T list_clear
-T list_del
-t list_disconnect
-T list_pop
-T list_push_b
-T list_push_f
-T list_swap
-T lst_size
-T main
-U malloc
-U mmap
-T node
-T node_clear
-t one_exist
-U open@GLIBC_2.2.5
-T parse_flag
-T parse_flags
-T print_content
-T print_help
-T print_list
-t register_tm_clones
-T search_head
-T search_tail
-T sort_list
-U strlen
-U write
+0000000000000892 r __abi_tag
+                 U __asan_handle_no_return
+                 U __asan_init
+0000000000049344 B __asan_option_detect_stack_use_after_return
+                 U __asan_register_globals
+                 U __asan_report_load1
+                 U __asan_report_load2
+                 U __asan_report_load4
+                 U __asan_report_load8
+                 U __asan_report_load_n
+                 U __asan_report_store1
+                 U __asan_report_store4
+                 U __asan_report_store8
+                 U __asan_report_store_n
+                 U __asan_stack_malloc_0
+                 U __asan_stack_malloc_1
+                 U __asan_stack_malloc_3
+                 U __asan_unregister_globals
+                 U __asan_version_mismatch_check_v8
+0000000000049344 B __bss_start
+                 U close@GLIBC_2.2.5
+0000000000049348 b completed.0
+0000000000013983 T convert_addr
+                 w __cxa_finalize@GLIBC_2.2.5
+0000000000045280 D __data_start
+0000000000045280 W data_start
+0000000000008720 t deregister_tm_clones
+0000000000008832 t __do_global_dtors_aux
+0000000000044456 d __do_global_dtors_aux_fini_array_entry
+0000000000045288 D __dso_handle
+0000000000044464 d _DYNAMIC
+0000000000049344 D _edata
+0000000000049352 B _end
+0000000000010430 T error
+                 U exit@GLIBC_2.2.5
+0000000000027360 T _fini
+0000000000008896 t frame_dummy
+0000000000044440 d __frame_dummy_init_array_entry
+0000000000038100 r __FRAME_END__
+                 U free
+0000000000013891 T free_header
+                 U fstat@GLIBC_2.33
+0000000000021662 T ft_bzero
+0000000000023369 t ft_convert_and_write
+0000000000025663 T ft_format_char
+0000000000026439 T ft_format_hex
+0000000000026668 t ft_format_int_and_decimal
+0000000000026922 T ft_format_numbers
+0000000000025948 t ft_format_p
+0000000000027207 T ft_format_string
+0000000000026489 t ft_format_unsigned
+0000000000025736 t ft_format_x
+0000000000023236 t ft_if_convert
+0000000000021746 t ft_intlen
+0000000000021817 T ft_itoa
+0000000000022068 T ft_memset
+0000000000016936 T ft_nm
+0000000000022865 T ft_printf
+0000000000027120 t ft_print_null
+0000000000022533 t ft_put_str
+0000000000010322 T ft_strcmp
+0000000000015765 T ft_strcmpl
+0000000000022383 T ft_strdup
+0000000000022807 T ft_strjoin
+0000000000022148 T ft_strlen
+0000000000022218 T ft_strncmp
+0000000000027168 t ft_sum_general_count
+0000000000025624 t ft_sum_general_count
+0000000000015754 T ft_testd
+0000000000015743 T ft_test_null
+0000000000021714 T ft_tolower
+0000000000010664 T get_symbol_type_x64
+0000000000045032 d _GLOBAL_OFFSET_TABLE_
+                 w __gmon_start__
+0000000000035628 r __GNU_EH_FRAME_HDR
+0000000000008192 T _init
+0000000000028672 R _IO_stdin_used
+                 w _ITM_deregisterTMCloneTable
+                 w _ITM_registerTMCloneTable
+                 U __libc_start_main@GLIBC_2.34
+0000000000024881 T list
+0000000000024609 T list_clear
+0000000000025232 T list_del
+0000000000025008 t list_disconnect
+0000000000025342 T list_pop
+0000000000024456 T list_push_b
+0000000000024303 T list_push_f
+0000000000024196 T list_swap
+0000000000044424 D __local_asan_preinit
+0000000000024828 T lst_size
+0000000000020641 T main
+                 U malloc
+                 U mmap
+0000000000025440 T node
+0000000000025534 T node_clear
+0000000000024977 t one_exist
+                 U open@GLIBC_2.2.5
+0000000000011572 T parse_flag
+0000000000013100 T parse_flags
+0000000000014548 T print_content
+0000000000008905 T print_help
+0000000000015359 T print_list
+0000000000008768 t register_tm_clones
+0000000000024702 T search_head
+0000000000024765 T search_tail
+0000000000016453 T sort_list
+0000000000008672 T _start
+                 U strlen
+0000000000021600 t _sub_D_00099_0
+0000000000021626 t _sub_I_00099_1
+0000000000049344 D __TMC_END__
+                 U write

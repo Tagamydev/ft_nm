@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 08:18:02 by samusanc          #+#    #+#             */
-/*   Updated: 2025/04/28 10:13:24 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/01 19:51:19 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,44 +289,40 @@ void	print_list(t_list *list, int order, int is_64, char flag)
 
 }
 
-int	ft_test1cull()
+int	ft_test_null()
 {
 	return (1);
 }
 
-int	ft_testb()
+int	ft_testd()
 {
 	return (1);
 
 }
 
-int	ft_strcmpl(char	*str1, char *str2)
+int ft_strcmpl(const char *s1, const char *s2)
 {
-	(void)ft_testb();
-	(void)ft_test1cull();
-	char	*cp_str1 = ft_strdup(str1);
-	char	*cp_str2 = ft_strdup(str2);
+    unsigned char c1, c2;
 
-	for (int i = 0; cp_str1[i]; i++)
-	{
-		cp_str1[i] = ft_tolower(cp_str1[i]);
-	}
-	for (int i = 0; cp_str2[i]; i++)
-	{
-		cp_str2[i] = ft_tolower(cp_str2[i]);
-	}
-	char	*cp_12 = cp_str1;
-	char	*cp_22 = cp_str2;
+    while (*s1 != '\0' || *s2 != '\0')
+    {
+        while (*s1 == '_') s1++;
+        while (*s2 == '_') s2++;
 
-	while (*cp_12 == '_')
-		*cp_12++;
-	while (*cp_22 == '_')
-		*cp_22++;
+        if (*s1 == '\0' && *s2 == '\0')
+            return 0;
 
-	int result = ft_strcmp(cp_12, cp_22);
-	free(cp_str1);
-	free(cp_str2);
-	return (result);
+        c1 = (unsigned char)ft_tolower(*s1);
+        c2 = (unsigned char)ft_tolower(*s2);
+
+        if (c1 != c2)
+            return (int)c1 - (int)c2;
+
+        if (*s1) s1++;
+        if (*s2) s2++;
+    }
+
+    return 0;
 }
 
 void	sort_list(t_list *list)
