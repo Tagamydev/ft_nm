@@ -6,7 +6,7 @@
 #    By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 01:22:18 by samusanc          #+#    #+#              #
-#    Updated: 2025/04/28 09:33:00 by samusanc         ###   ########.fr        #
+#    Updated: 2025/05/01 20:11:49 by samusanc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -80,7 +80,7 @@ submodule_fclean:
 clean: .clean
 	@echo "objects removed!"
 
-.clean:
+.clean: .submodule_clean
 	@echo "cleaning objects..."
 	@rm -f $(OBJS)
 	@rm -rf $(O_DIR)

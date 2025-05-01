@@ -289,17 +289,6 @@ void	print_list(t_list *list, int order, int is_64, char flag)
 
 }
 
-int	ft_test_null()
-{
-	return (1);
-}
-
-int	ft_testd()
-{
-	return (1);
-
-}
-
 int ft_strcmpl(const char *s1, const char *s2)
 {
     unsigned char c1, c2;
