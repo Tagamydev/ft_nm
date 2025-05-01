@@ -249,6 +249,9 @@ void	print_content(t_header *content, int is_64, char flag)
 	if (flag == 'u')
 		if (content->type_char != 'U' && content->type_char != 'w')
 			return ;
+	if (flag == 'g')
+		if (content->type_char == 't' || content->type_char == 'd' || content->type_char == 'b')
+			return ;
 	if (content->addr)
 	{
 		char	*str = convert_addr(content->addr, is_64);
