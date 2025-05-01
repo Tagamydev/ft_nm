@@ -1,5 +1,6 @@
 import subprocess
 import difflib
+import re
 from termcolor import colored
 
 def run_command(cmd):
@@ -9,17 +10,24 @@ def run_command(cmd):
     stdout, stderr = process.communicate()
     return stdout, stderr
 
+def strip_address(line):
+    """Remove address from nm output line, keeping type and symbol name."""
+    match = re.match(r'^[0-9a-fA-F]+\s+([A-Za-z])\s+(.+)$', line.strip())
+    return f"{match.group(1)} {match.group(2)}" if match else line.strip()
+
 def diff_output(reference, test):
+    ref_lines = [strip_address(line) for line in reference.splitlines()]
+    test_lines = [strip_address(line) for line in test.splitlines()]
     return list(difflib.unified_diff(
-        reference.splitlines(keepends=True),
-        test.splitlines(keepends=True),
+        ref_lines,
+        test_lines,
         lineterm=''
     ))
 
 def print_diff(tag, diff_lines):
     if not diff_lines:
         return
-    print(colored(f"[stderr][{tag}]", "yellow"))
+    print(colored(f"[DIFF][{tag}]", "yellow"))
     for line in diff_lines:
         color = "green" if line.startswith("+") else "red" if line.startswith("-") else "white"
         print(colored(line.rstrip(), color))
@@ -33,7 +41,7 @@ def main(file_path):
 
     for idx, command in enumerate(commands, 1):
         print(colored(f"[test {idx}] [command: \"{command}\"]", "cyan"))
-        
+
         cmd_or = f"nm {command}"
         cmd_ft = f"./ft_nm {command}"
 
@@ -49,11 +57,9 @@ def main(file_path):
         else:
             print(colored("[KO]", "red"))
             if stderr_diff:
-                print_diff("or_nm", diff_output(stderr_or, stderr_ft))
-                print_diff("ft_nm", diff_output(stderr_ft, stderr_or))
+                print_diff("stderr", stderr_diff)
             if stdout_diff:
-                print_diff("or_nm stdout", diff_output(stdout_or, stdout_ft))
-                print_diff("ft_nm stdout", diff_output(stdout_ft, stdout_or))
+                print_diff("stdout", stdout_diff)
             failed += 1
         print()
 
