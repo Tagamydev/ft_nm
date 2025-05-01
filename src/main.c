@@ -222,23 +222,36 @@ void	*free_header(void *ptr)
 	return (NULL);
 }
 
-char	*convert_addr()
+char	*convert_addr(int addr, int is_64)
 {
 	char	str_64[17];
 	char	str_86[9];
 
-	ft_bzero(str_64, sizeof(str_64));
 	ft_memset(str_64, '0', sizeof(str_64));
-	ft_bzero(str_86, sizeof(str_86));
 	ft_memset(str_86, '0', sizeof(str_86));
 
+	char	*nbr = ft_itoa(addr);
+	if (!nbr)
+		return (NULL);
+	str_64[16 - ft_strlen(nbr)] = '\0';
+	str_86[8 - ft_strlen(nbr)] = '\0';
+	if (is_64)
+		return (ft_strjoin(ft_strdup(str_64), nbr));
+	else
+		return (ft_strjoin(ft_strdup(str_86), nbr));
 }
 
 void	print_content(t_header *content, int is_64, char flag)
 {
+	if (flag != 'a')
+		if (content->type_char == 'a' || content->type_char == 'A')
+			return ;
+	if (flag == 'u')
+		if (content->type_char != 'U' && content->type_char != 'w')
+			return ;
 	if (content->addr)
 	{
-		char	*str = convert_addr(content->addr, int is_64);
+		char	*str = convert_addr(content->addr, is_64);
 		ft_printf("%s %c %s\n", str, content->type_char, content->name);
 		free(str);
 	}
@@ -273,6 +286,49 @@ void	print_list(t_list *list, int order, int is_64, char flag)
 
 }
 
+int	ft_strcmpl(char	*str1, char *str2)
+{
+	char	*cp_str1 = ft_strdup(str1);
+	char	*cp_str2 = ft_strdup(str2);
+
+	for (int i = 0; cp_str1[i]; i++)
+	{
+		cp_str1[i] = ft_tolower(cp_str1[i]);
+	}
+	for (int i = 0; cp_str2[i]; i++)
+	{
+		cp_str2[i] = ft_tolower(cp_str2[i]);
+	}
+
+	int result = ft_strcmp(cp_str1, cp_str2);
+	free(cp_str1);
+	free(cp_str2);
+	return (result);
+}
+
+void	sort_list(t_list *list)
+{
+	t_node	*tmp1;
+	tmp1 = list->head;
+	for (int i = 0; i < list->size; i++)
+	{
+		t_node	*tmp2 = tmp1->next;
+		if (tmp2)
+		{
+			t_header	*content1 = tmp1->content;
+			t_header	*content2 = tmp2->content;
+			if (ft_strcmpl(content1->name, content2->name) < 0)
+			{
+				list_swap(tmp1, tmp2);
+				i = -1;
+				tmp1 = list->head;
+				continue;
+			}
+		}
+		tmp1 = tmp2;
+	}
+}
+
 int	ft_nm(char *file, t_flags flags)
 {
 	if (file[0] == '-')
@@ -288,10 +344,10 @@ int	ft_nm(char *file, t_flags flags)
 	if (e_ident[0] != 0x7f || e_ident[1] != 'E' || e_ident[2] != 'L' || e_ident[3] != 'F')
 		return (error(file, "file format not recognized", 0));
 	int is_64 = (e_ident[4] == ELFCLASS64);
+	t_list	output = list(NULL);
 	if (is_64)
 	{
 		// x64 file
-		//ft_printf("%s\n", "this file is x64");
 		Elf64_Ehdr *ehdr = (Elf64_Ehdr *)mapped;
 		Elf64_Shdr	*shdr = (Elf64_Shdr *)((char *)mapped + ehdr->e_shoff);
 		char *shtrtab = (char*)mapped + shdr[ehdr->e_shstrndx].sh_offset;
@@ -309,7 +365,6 @@ int	ft_nm(char *file, t_flags flags)
 		Elf64_Sym *symbols = (Elf64_Sym *)((char *)mapped + symtab_hdr->sh_offset);
 		int num_symbols = symtab_hdr->sh_size / sizeof(Elf64_Sym);
 		char *strtab = (char *)mapped + strtab_hdr->sh_offset;
-		t_list	output = list(NULL);
 		for (int i = 0; i < num_symbols; i++)
 		{
 			t_node		*new_node;
@@ -328,32 +383,32 @@ int	ft_nm(char *file, t_flags flags)
 			header->name = ft_strdup(name);
 			list_push_b(&output, node(header, free_header));
 		}
-	// u > g > a
-	// p > r
-		int	reverse = 0;
-
-		if (!flags.p)
-		{
-			sort_list(&output);
-			if (flags.r)
-				reverse = 1;
-		}
-
-		if (flags.u)
-			print_list(&output, reverse, 1,'u');
-		else if (flags.g)
-			print_list();
-		else if (flags.a)
-			print_list();
-		else
-			print_list();
-		list_clear(&output);
 	}
 	else
 	{
 		// x86 file
 		ft_printf("%s", "this file is x86");
 	}
+
+	int	reverse = 0;
+
+	if (!flags.p)
+	{
+		sort_list(&output);
+		if (flags.r)
+			reverse = 1;
+	}
+
+	if (flags.u)
+		print_list(&output, reverse, is_64, 'u');
+	else if (flags.g)
+		print_list(&output, reverse, is_64, 'g');
+	else if (flags.a)
+		print_list(&output, reverse, is_64, 'a');
+	else
+		print_list(&output, reverse, is_64, 'x');
+	list_clear(&output);
+
 	return (0);
 }
 
