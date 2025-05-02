@@ -52,5 +52,7 @@ void	print_content(t_header *content, int is_64, char flag);
 void	print_list(t_list *list, int order, int is_64, char flag);
 int		ft_strcmpl(const char *s1, const char *s2);
 void	sort_list(t_list *list);
+int		process_elf64(void *mapped, t_list *output);
+int		process_elf32(void *mapped, t_list *output);
 
 #endif
