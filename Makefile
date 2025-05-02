@@ -6,7 +6,7 @@
 #    By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 01:22:18 by samusanc          #+#    #+#              #
-#    Updated: 2025/05/01 20:11:49 by samusanc         ###   ########.fr        #
+#    Updated: 2025/05/02 02:04:14 by samusanc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,11 @@ CC			= gcc $(CFLAGS) $(INC)
 
 SRCS		= \
 				./src/main.c \
+				./src/x64/x64_utils.c \
+				./src/x86/x86_utlis.c \
+				./src/utils/flags.c \
+				./src/utils/print_utils.c \
+				./src/utils/utils.c \
 
 #================================= OBJS =================================#
 
