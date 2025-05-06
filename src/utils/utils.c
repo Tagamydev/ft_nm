@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 02:01:20 by samusanc          #+#    #+#             */
-/*   Updated: 2025/05/02 02:01:28 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:53:58 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ void	sort_list(t_list *list)
 {
 	t_node	*tmp1;
 	tmp1 = list->head;
-	for (int i = 0; i < list->size; i++)
+	for (int i = 0; (size_t)i < list->size; i++)
 	{
 		t_node	*tmp2 = tmp1->next;
 		if (tmp2)

@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 02:01:04 by samusanc          #+#    #+#             */
-/*   Updated: 2025/05/02 02:01:12 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:53:39 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	print_list(t_list *list, int order, int is_64, char flag)
 			tmp = list->head;
 		else
 			tmp = list->tail;
-		for (int i = 0; i < list->size; i++)
+		for (int i = 0; (size_t)i < list->size; i++)
 		{
 			t_header	*tmp2;
 

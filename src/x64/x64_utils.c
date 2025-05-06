@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 02:01:38 by samusanc          #+#    #+#             */
-/*   Updated: 2025/05/02 02:01:47 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:59:27 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 char	get_symbol_type_x64(Elf64_Sym *sym, Elf64_Shdr *shdrs, Elf64_Ehdr *ehdr)
 {
+	if (!sym || !shdrs || !ehdr)
+		return 0;
 	unsigned char bind = ELF64_ST_BIND(sym->st_info);
 
 	if (sym->st_shndx == SHN_UNDEF)
@@ -50,11 +52,14 @@ char	get_symbol_type_x64(Elf64_Sym *sym, Elf64_Shdr *shdrs, Elf64_Ehdr *ehdr)
 		else
 			return ('W');
 	}
+	(void)ehdr;
 	return c;
 }
 
 int	process_elf64(void *mapped, t_list *output)
 {
+	if (!mapped || !output)
+		return 0;
 	Elf64_Ehdr *ehdr = (Elf64_Ehdr *)mapped;
 	Elf64_Shdr *shdr = (Elf64_Shdr *)((char *)mapped + ehdr->e_shoff);
 	char *shtrtab = (char*)mapped + shdr[ehdr->e_shstrndx].sh_offset;

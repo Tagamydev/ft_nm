@@ -41,10 +41,10 @@ int	is_valid_elf(unsigned char *e_ident, char *file)
 {
 	if (e_ident[0] != 0x7f || e_ident[1] != 'E' || e_ident[2] != 'L' || e_ident[3] != 'F')
 		return error(file, "file format not recognized", 0);
-	return 1;
+	return 0;
 }
 
-int	ft_nm(char *file, t_flags flags)
+int	ft_nm(char *file, t_flags flags, int multiple)
 {
 	if (file[0] == '-')
 		return 0;
@@ -59,12 +59,15 @@ int	ft_nm(char *file, t_flags flags)
 	close(fd);
 	
 	unsigned char *e_ident = (unsigned char *)mapped;
-	if (!is_valid_elf(e_ident, file))
+	if (is_valid_elf(e_ident, file))
 		return 0;
-	
+
 	int is_64 = (e_ident[4] == ELFCLASS64);
 	t_list output = list(NULL);
 	
+	if (multiple)
+		ft_printf("\n%s:\n", file);
+
 	int result = 0;
 	if (is_64)
 		result = process_elf64(mapped, &output);
@@ -88,11 +91,11 @@ int	main(int argc, char **argv)
 		return 1;
 	}
 	if (argc == (flags.total + 1))
-		error_counter += ft_nm("a.out", flags);
+		error_counter += ft_nm("a.out", flags, 0);
 	else
 	{
 		for (int i = 1; i < argc; i++) {
-			error_counter += ft_nm(argv[i], flags);
+			error_counter += ft_nm(argv[i], flags, 1);
 		}
 	}
 	return error_counter;

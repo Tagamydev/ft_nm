@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 02:00:49 by samusanc          #+#    #+#             */
-/*   Updated: 2025/05/02 02:00:57 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/06 15:52:27 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 void	parse_flag(t_flags *result, char *str)
 {
+	char	error_str[3];
+	char	*error_ptr = NULL;
+
 	if (str[0] != '-')
 		return ;
 	str++;
@@ -42,9 +45,6 @@ void	parse_flag(t_flags *result, char *str)
 				exit(0);
 				break;
 			default:
-				char	error_str[3];
-				char	*error_ptr;
-
 				error_str[0] = str[i];
 				error_str[1] = '\'';
 				error_str[2] = '\0';
@@ -61,7 +61,6 @@ void	parse_flag(t_flags *result, char *str)
 t_flags	parse_flags(char **argv)
 {
 	t_flags	result;
-	char	**array = argv + 1;
 
 	ft_bzero(&result, sizeof(t_flags));
 	for (int i = 0; argv[i]; i++)
