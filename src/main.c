@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 08:18:02 by samusanc          #+#    #+#             */
-/*   Updated: 2025/05/02 02:59:54 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/07 18:16:48 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,20 @@ int	main(int argc, char **argv)
 		return 1;
 	}
 	if (argc == (flags.total + 1))
-		error_counter += ft_nm("a.out", flags, 0);
+	{
+		if (argc > (flags.total + 1))
+			error_counter += ft_nm("a.out", flags, 0);
+		else
+			error_counter += ft_nm("a.out", flags, 1);
+	}
 	else
 	{
 		for (int i = 1; i < argc; i++) {
-			error_counter += ft_nm(argv[i], flags, 1);
+			if (argc > (flags.total + 1))
+				error_counter += ft_nm(argv[i], flags, 0);
+			else
+				error_counter += ft_nm(argv[i], flags, 1);
+
 		}
 	}
 	return error_counter;

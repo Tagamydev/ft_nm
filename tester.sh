@@ -1,88 +1,108 @@
-#!/usr/bin/env bash
-# bash_tester.sh: compare output of system 'nm' vs custom './ft_nm' with colored output and summary
-# Usage: bash bash_tester.sh [path_to_ft_nm] [path_to_binaries]
+#!/usr/bin/env python3
+"""
+bash_tester.py: Compare system 'nm' vs custom './ft_nm' outputs with colored output and summary.
+Usage: python3 bash_tester.py [--ft-nm PATH] [--bin-dir PATH]
+"""
+import argparse
+import subprocess
+import sys
+import os
+from difflib import unified_diff
 
-set -euo pipefail
-IFS=$'\n\t'
+# ANSI color codes
+green = '\033[0;32m'
+red = '\033[0;31m'
+nc = '\033[0m'
 
-FT_NM=${1:-./ft_nm}
-BIN_DIR=${2:-./bin}
+# List of flags to test
+FLAGS = ['', '-a', '-g', '-u', '-r', '-p']
 
-# Ensure ft_nm exists and is executable
-if [[ ! -x "$FT_NM" ]]; then
-  echo "Error: '$FT_NM' not found or not executable." >&2
-  exit 1
-fi
 
-# Color codes
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+def run_nm(cmd, args):
+    """
+    Run the given command (`nm` or ft_nm) with provided args list.
+    Returns a list of strings containing columns 2 and 3 of each line.
+    """
+    try:
+        res = subprocess.run([cmd] + args,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.DEVNULL,
+                             check=False,
+                             text=True)
+        # take columns 2 and 3 (indexes 1 and 2) of each line
+        lines = [ ' '.join(parts[1:3]) for parts in (line.split() for line in res.stdout.splitlines()) if len(parts) >= 3 ]
+        return lines
+    except Exception:
+        return []
 
-# List of flags to test (empty means no flag)
-FLAGS=( "" "-a" "-g" "-u" "-r" "-p" )
 
-# Counters and lists
-TOTAL=0
-PASS=0
-FAIL=0
-FAIL_LIST=()
+def run_test(ft_nm, file, flag, counters, fail_list):
+    label = f"file='{file}' flags='{flag}'"
+    counters['total'] += 1
+    print(f"=== Testing: {label} ===")
 
-# Function: run diff between nm and ft_nm for given file and flag
-run_test() {
-  local file="$1"
-  local flag="$2"
-  local label
+    args = [flag, file] if flag else [file]
+    sys_out = run_nm('nm', args)
+    ft_out = run_nm(ft_nm, args)
 
-  label="file='$file' flags='$flag'"
-  (( TOTAL++ ))
-  echo "=== Testing: $label ==="
+    if sys_out == ft_out:
+        counters['pass'] += 1
+        print(f"[{green}OK{nc}] {label}\n")
+    else:
+        counters['fail'] += 1
+        fail_list.append(label)
+        print(f"[{red}FAIL{nc}] {label}")
+        diff = unified_diff(sys_out, ft_out,
+                            fromfile='nm output',
+                            tofile='ft_nm output',
+                            lineterm='')
+        print("--- unified diff ---")
+        for line in diff:
+            print(line)
+        print()
 
-  # Capture outputs
-  local sys_out ft_out
-  sys_out=$(nm $flag "$file" | awk '{print $1, $2}')
-  ft_out=$($FT_NM $flag "$file" | awk '{print $1, $2}')
 
-  # Compare outputs
-  if diff <(echo "$sys_out") <(echo "$ft_out") &>/dev/null; then
-    (( PASS++ ))
-    echo -e "[${GREEN}OK${NC}] $label"
-  else
-    (( FAIL++ ))
-    FAIL_LIST+=("$label")
-    echo -e "[${RED}FAIL${NC}] $label"
-    echo "--- unified diff ---"
-    diff -u <(echo "$sys_out") <(echo "$ft_out") || true
-  fi
-  echo
-}
+def main():
+    parser = argparse.ArgumentParser(description='Compare nm vs ft_nm outputs')
+    parser.add_argument('--ft-nm', default='./ft_nm',
+                        help='Path to the ft_nm executable')
+    parser.add_argument('--bin-dir', default='./bin',
+                        help='Directory containing binaries')
+    args = parser.parse_args()
 
-# Main: Mandatory pass (no flags)
-for file in "$BIN_DIR"/*; do
-  if [[ -f "$file" && -x "$file" ]]; then
-    run_test "$file" ""
-  fi
-done
+    if not os.path.isfile(args.ft_nm) or not os.access(args.ft_nm, os.X_OK):
+        print(f"Error: '{args.ft_nm}' not found or not executable.", file=sys.stderr)
+        sys.exit(1)
 
-# Bonus: run with each flag
-printf "\n===== Bonus: flag combinations =====\n"
-for file in "$BIN_DIR"/*; do
-  if [[ -f "$file" && -x "$file" ]]; then
-    for flag in "${FLAGS[@]}"; do
-      [[ -z "$flag" ]] && continue # skip empty flag
-      run_test "$file" "$flag"
-    done
-  fi
-done
+    counters = {'total': 0, 'pass': 0, 'fail': 0}
+    fail_list = []
 
-# Summary
-echo "=========================================="
-echo "Total tests: $TOTAL"
-echo -e "Passed: ${GREEN}$PASS${NC}"
-echo -e "Failed: ${RED}$FAIL${NC}"
-if (( FAIL > 0 )); then
-  echo "\nFailed cases:"
-  for case in "${FAIL_LIST[@]}"; do
-    echo -e "  - ${RED}$case${NC}"
-  done
-fi
+    # Mandatory: no flags
+    for fname in os.listdir(args.bin_dir):
+        path = os.path.join(args.bin_dir, fname)
+        if os.path.isfile(path) and os.access(path, os.X_OK):
+            run_test(args.ft_nm, path, '', counters, fail_list)
+
+    # Bonus: flags
+    print("\n===== Bonus: flag combinations =====")
+    for fname in os.listdir(args.bin_dir):
+        path = os.path.join(args.bin_dir, fname)
+        if os.path.isfile(path) and os.access(path, os.X_OK):
+            for flag in FLAGS:
+                if not flag:
+                    continue
+                run_test(args.ft_nm, path, flag, counters, fail_list)
+
+    # Summary
+    print("="*42)
+    print(f"Total tests: {counters['total']}")
+    print(f"Passed: {green}{counters['pass']}{nc}")
+    print(f"Failed: {red}{counters['fail']}{nc}")
+    if counters['fail'] > 0:
+        print("\nFailed cases:")
+        for case in fail_list:
+            print(f"  - {red}{case}{nc}")
+
+if __name__ == '__main__':
+    main()
+
