@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 02:01:55 by samusanc          #+#    #+#             */
-/*   Updated: 2025/05/06 15:59:00 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/07 19:28:28 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,13 +56,24 @@ char	get_symbol_type_x86(Elf32_Sym *sym, Elf32_Shdr *shdrs, Elf32_Ehdr *ehdr)
 	return c;
 }
 
-int	process_elf32(void *mapped, t_list *output)
+int	process_elf32(void *mapped, t_list *output, size_t file_size, char *file)
 {
 	if (!mapped || !output)
 		return 0;
 	Elf32_Ehdr *ehdr = (Elf32_Ehdr *)mapped;
+
+	if (ehdr->e_shoff + (ehdr->e_shnum * sizeof(Elf32_Shdr)) > file_size)
+	    return error(file, "file format not recognized", 0);
+
 	Elf32_Shdr *shdr = (Elf32_Shdr *)((char *)mapped + ehdr->e_shoff);
-	char *shtrtab = (char*)mapped + shdr[ehdr->e_shstrndx].sh_offset;
+
+	if (ehdr->e_shstrndx >= ehdr->e_shnum)
+	    return error("DEBUG", "e_shstrndx out of bounds", 0);
+
+	if (shdr[ehdr->e_shstrndx].sh_offset > file_size)
+	    return error("DEBUG", "Section header string table offset out of bounds", 0);
+
+	char *shtrtab = (char *)mapped + shdr[ehdr->e_shstrndx].sh_offset;
 	Elf32_Shdr *symtab_hdr = NULL;
 	Elf32_Shdr *strtab_hdr = NULL;
 	
@@ -97,5 +108,6 @@ int	process_elf32(void *mapped, t_list *output)
 		
 		list_push_b(output, node(header, free_header));
 	}
+	
 	return 0;
 }

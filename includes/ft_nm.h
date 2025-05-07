@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 08:54:32 by samusanc          #+#    #+#             */
-/*   Updated: 2025/05/07 19:01:20 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/07 19:27:40 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,6 @@ void	print_list(t_list *list, int order, int is_64, char flag);
 int		ft_strcmpl(const char *s1, const char *s2);
 void	sort_list(t_list *list);
 int		process_elf64(void *mapped, t_list *output, size_t file_size, char *file);
-int		process_elf32(void *mapped, t_list *output);
+int		process_elf32(void *mapped, t_list *output, size_t file_size, char *file);
 
 #endif
