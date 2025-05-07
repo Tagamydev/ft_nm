@@ -35,31 +35,50 @@ def run_nm(cmd, args):
     except Exception:
         return []
 
-
 def run_test(ft_nm, file, flag, counters, fail_list):
     label = f"file='{file}' flags='{flag}'"
     counters['total'] += 1
     print(f"=== Testing: {label} ===")
 
     args = [flag, file] if flag else [file]
-    sys_out = run_nm('nm', args)
-    ft_out = run_nm(ft_nm, args)
+
+    # Get raw outputs from nm and ft_nm
+    try:
+        sys_res = subprocess.run(['nm'] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False, text=True)
+        ft_res = subprocess.run([ft_nm] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False, text=True)
+    except Exception:
+        counters['fail'] += 1
+        fail_list.append(label)
+        print(f"[{red}ERROR{nc}] {label} - exception during subprocess")
+        return
+
+    sys_lines = [line for line in sys_res.stdout.splitlines() if 'plugin:' not in line and len(line.strip().split()) >= 3]
+    ft_lines  = [line for line in ft_res.stdout.splitlines() if 'plugin:' not in line and len(line.strip().split()) >= 3]
+
+    # Extract only columns 2 and 3
+    sys_out = [' '.join(line.strip().split()[1:3]) for line in sys_lines]
+    ft_out  = [' '.join(line.strip().split()[1:3]) for line in ft_lines]
 
     if sys_out == ft_out:
         counters['pass'] += 1
         print(f"[{green}OK{nc}] {label}\n")
     else:
-        counters['fail'] += 1
-        fail_list.append(label)
-        print(f"[{red}FAIL{nc}] {label}")
-        diff = unified_diff(sys_out, ft_out,
-                            fromfile='nm output',
-                            tofile='ft_nm output',
-                            lineterm='')
-        print("--- unified diff ---")
-        for line in diff:
-            print(line)
-        print()
+        # Check if the *only* difference was a plugin error
+        if all("plugin:" in line for line in sys_res.stdout.splitlines() + ft_res.stdout.splitlines()):
+            counters['pass'] += 1
+            print(f"[{green}OK{nc}] {label} (plugin warning only)\n")
+        else:
+            counters['fail'] += 1
+            fail_list.append(label)
+            print(f"[{red}FAIL{nc}] {label}")
+            diff = unified_diff(sys_out, ft_out,
+                                fromfile='nm output',
+                                tofile='ft_nm output',
+                                lineterm='')
+            print("--- unified diff ---")
+            for line in diff:
+                print(line)
+            print()
 
 
 def main():

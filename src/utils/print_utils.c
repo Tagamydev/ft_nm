@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 02:01:04 by samusanc          #+#    #+#             */
-/*   Updated: 2025/05/07 18:32:03 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/07 19:10:54 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	print_content(t_header *content, int is_64, char flag)
 	if (flag == 'g')
 		if (content->type_char == 't' || content->type_char == 'd' || content->type_char == 'b')
 			return ;
-	if (content->addr || content->type_char == 'T')
+	if (content->addr || content->type_char == 'T' || content->type_char == 't' || content->type_char == 'a')
 	{
 		char	*str = convert_addr(content->addr, is_64);
 		ft_printf("%s %c %s\n", str, content->type_char, content->name);

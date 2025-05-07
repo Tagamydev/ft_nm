@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 08:18:02 by samusanc          #+#    #+#             */
-/*   Updated: 2025/05/07 18:16:48 by samusanc         ###   ########.fr       */
+/*   Updated: 2025/05/07 19:01:06 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,14 @@ int	ft_nm(char *file, t_flags flags, int multiple)
 
 	int result = 0;
 	if (is_64)
-		result = process_elf64(mapped, &output);
+		result = process_elf64(mapped, &output, st.st_size, file);
 	else
 		result = process_elf32(mapped, &output);
 	
 	if (result == 0)
 		display_symbols(&output, flags, is_64);
 	list_clear(&output);
+	munmap(mapped, st.st_size);
 	return result;
 }
 
