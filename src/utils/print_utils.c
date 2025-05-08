@@ -34,7 +34,7 @@ char	*convert_addr(int addr, int is_64)
 void	print_content(t_header *content, int is_64, char flag)
 {
 	if (flag != 'a')
-		if (content->type_char == 'a' || content->type_char == 'A')
+		if (content->type_char == 'a' || content->type_char == 'A' || content->type_char == 'N' || content->name[0] == '.')
 			return ;
 	if (flag == 'u')
 		if (content->type_char != 'U' && content->type_char != 'w')
@@ -42,7 +42,7 @@ void	print_content(t_header *content, int is_64, char flag)
 	if (flag == 'g')
 		if (content->type_char == 't' || content->type_char == 'd' || content->type_char == 'b')
 			return ;
-	if (content->addr || content->type_char == 'T' || content->type_char == 't' || content->type_char == 'a')
+	if (content->addr != 'r' && (content->addr || content->type_char == 'T' || content->type_char == 't' || content->type_char == 'a' || content->type_char == 'N'))
 	{
 		char	*str = convert_addr(content->addr, is_64);
 		ft_printf("%s %c %s\n", str, content->type_char, content->name);

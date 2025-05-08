@@ -20,8 +20,10 @@ void	display_symbols(t_list *output, t_flags flags, int is_64)
 	if (!flags.p) {
 		sort_list(output);
 		if (flags.r)
-			reverse = 1;
+			reverse = 0;
 	}
+	else
+		reverse = 1;
 	
 	char format = 'x';
 	if (flags.u)
