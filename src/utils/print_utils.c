@@ -40,10 +40,12 @@ void	print_content(t_header *content, int is_64, char flag)
 		if (content->type_char != 'U' && content->type_char != 'w')
 			return ;
 	if (flag == 'g')
-		if (content->type_char == 't' || content->type_char == 'd' || content->type_char == 'b')
+		if (content->type_char == 't' || content->type_char == 'd' || content->type_char == 'b' || content->type_char == 'r')
 			return ;
-	if (content->addr != 'r' && (content->addr || content->type_char == 'T' || content->type_char == 't' || content->type_char == 'a' || content->type_char == 'N' || content->type_char == 'b' || content->type_char == 'D'))
+	if (content->addr || content->type_char == 'T' || content->type_char == 't' || content->type_char == 'a' || content->type_char == 'N' || content->type_char == 'b' || content->type_char == 'D' || content->type_char == 'r')
 	{
+		if (ft_strcmp(content->name, ".comment") == 0)
+			content->type_char = 'n';
 		char	*str = convert_addr(content->addr, is_64);
 		ft_printf("%s %c %s\n", str, content->type_char, content->name);
 		free(str);

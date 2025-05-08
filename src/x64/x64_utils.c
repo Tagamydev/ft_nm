@@ -131,6 +131,5 @@ int	process_elf64(void *mapped, t_list *output, size_t file_size, char *file)
 		header->name      = ft_strdup(name);
 		list_push_b(output, node(header, free_header));
 	}
-	
 	return 0;
 }
