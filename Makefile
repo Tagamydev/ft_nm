@@ -6,7 +6,7 @@
 #    By: samusanc <samusanc@student.42madrid.com>   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/05 01:22:18 by samusanc          #+#    #+#              #
-#    Updated: 2025/05/08 14:53:42 by smsanchez        ###   ########.fr        #
+#    Updated: 2025/05/08 14:56:33 by smsanchez        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,7 +52,7 @@ $(O_DIR)/%.o: %.c
 
 all: submodules $(NAME)
 
-$(NAME): .mandatory
+$(NAME): submodules $(OBJS) .mandatory
 	@echo "mandatory done..."
 
 #============================= SUBMODULES =============================#
@@ -66,7 +66,7 @@ submodules: .make_submodules
 
 #======================= MANDATORY AND BONUS =========================#
 
-.mandatory: submodules $(OBJS)
+.mandatory:
 	$(CC) -o $(NAME) $(OBJS) $(SUBMODLIB)
 	@touch .mandatory
 
@@ -94,42 +94,4 @@ clean: .clean
 .submodule_clean:
 	@make -sC ./libft/ clean
 
-#============================  DOCKER  ===============================#
-
-docker: build up
-
-build:
-	$(COMPOSE) build
-
-up:
-	$(COMPOSE) up
-
-down:
-	$(COMPOSE) down -t 1
-
-stop:
-	if [ -n "$$(docker ps -aq)" ]; then \
-		docker stop $$(docker ps -aq); \
-	fi
-
-delvol:
-	if [ -n "$$(docker volume ls -qf dangling=true)" ]; then \
-		docker volume rm $$(docker volume ls -qf dangling=true); \
-	fi
-
-clean-compose: 
-	$(COMPOSE) down --rmi all --volumes
-
-docker-re: clean-compose docker
-
-docker-fclean: down docker-clean delvol
-	docker system prune -a -f --volumes
-	rm -rf cli/src/badapple/frames/
-	rm -rf .apple
-
-docker-clean: stop
-	if [ -n "$$(docker ps -aq)" ]; then \
-		docker rm $$(docker ps -aq); \
-	fi
-
-.PHONY: all clean fclean re title submodules submodule_fclean docker docker-clean docker-fclean docker-re stop down up build delvol
+.PHONY: all clean fclean re title submodules submodule_fclean
