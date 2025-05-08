@@ -126,7 +126,7 @@ void	sort_list(t_list *list)
 		{
 			t_header	*content1 = tmp1->content;
 			t_header	*content2 = tmp2->content;
-			if (ft_strcmpl(content1->name, content2->name) < 0)
+			if (ft_strcmp(content1->name, content2->name) < 0)
 			{
 				list_swap(tmp1, tmp2);
 				i = -1;
