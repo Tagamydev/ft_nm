@@ -20,7 +20,7 @@ void	display_symbols(t_list *output, t_flags flags, int is_64)
 	if (!flags.p) {
 		sort_list(output);
 		if (flags.r)
-			reverse = 0;
+			reverse = 1;
 	}
 	else
 		reverse = 1;

@@ -7,6 +7,6 @@ fi
 
 for file in "$@"; do
     echo "Comparing: $file"
-    diff <(./ft_nm -g "$file" | awk '{print $2, $3}') <(nm -g "$file" | awk '{print $2, $3}')
+    diff <(./ft_nm -a "$file" | awk '{print $2, $3}') <(nm -a "$file" | awk '{print $2, $3}')
     echo
 done

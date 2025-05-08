@@ -42,7 +42,7 @@ void	print_content(t_header *content, int is_64, char flag)
 	if (flag == 'g')
 		if (content->type_char == 't' || content->type_char == 'd' || content->type_char == 'b')
 			return ;
-	if (content->addr != 'r' && (content->addr || content->type_char == 'T' || content->type_char == 't' || content->type_char == 'a' || content->type_char == 'N'))
+	if (content->addr != 'r' && (content->addr || content->type_char == 'T' || content->type_char == 't' || content->type_char == 'a' || content->type_char == 'N' || content->type_char == 'b' || content->type_char == 'D'))
 	{
 		char	*str = convert_addr(content->addr, is_64);
 		ft_printf("%s %c %s\n", str, content->type_char, content->name);
