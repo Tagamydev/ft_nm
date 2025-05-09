@@ -20,7 +20,6 @@ char	get_symbol_type_x86(Elf32_Sym *sym, Elf32_Shdr *shdrs, Elf32_Ehdr *ehdr)
 	unsigned bind = ELF32_ST_BIND(sym->st_info);
     unsigned type = ELF32_ST_TYPE(sym->st_info);
 
-    /* undefined, abs, common as before… */
     if (sym->st_shndx == SHN_UNDEF)
         return bind == STB_WEAK ? 'w' : 'U';
     if (sym->st_shndx == SHN_ABS)
@@ -30,8 +29,6 @@ char	get_symbol_type_x86(Elf32_Sym *sym, Elf32_Shdr *shdrs, Elf32_Ehdr *ehdr)
 
     Elf32_Shdr *sec = &shdrs[sym->st_shndx];
 
-    /* SECTION symbols get the *same* flag-based logic, but
-       also a default ‘N’ if no other flag matches. */
     if (type == STT_SECTION)
     {
         char c;
@@ -51,11 +48,9 @@ char	get_symbol_type_x86(Elf32_Sym *sym, Elf32_Shdr *shdrs, Elf32_Ehdr *ehdr)
         return c;
     }
 
-    /* weak symbols (non-section) */
     if (bind == STB_WEAK)
         return sym->st_shndx == SHN_UNDEF ? 'w' : 'W';
 
-    /* everything else (FUNC, OBJECT, etc) also classified by section flags */
     {
         char c = '?';
         if (sec->sh_type == SHT_NOBITS && (sec->sh_flags & SHF_WRITE))
